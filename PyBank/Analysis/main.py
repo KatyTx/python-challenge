@@ -5,6 +5,16 @@ import csv
 #set path for files
 csvpath = os.path.join('..' , 'Resources', 'budget_data.csv')
 
+# open the csv
+with open(csvpath, 'r') as csvfile:
+    csvreader = csv.reader(csvfile, delimiter=',')
+
+    print(csvreader)
+
+    #read the header 
+    csv_header = next(csvreader)
+    print(f"CSV Header : {csv_header}")
+
 # list to store data
 total_months = []
 total_profitloss = []
@@ -56,22 +66,31 @@ def stats(budget_info):
     print(f'Greatest Decrease in Profits: {minmonth} {greatest_decrease_in_profits')
 
 
-
-# open the csv
-with open(csvpath, 'r') as csvfile:
-    csvreader = csv.reader(csvfile, delimiter=',')
-
-    print(csvreader)
-
-    #read the header 
-    csv_header = next(csvreader)
-    print(f"CSV Header : {csv_header}")
-
 #loop through the data
     for row in csvreader:
         print(months)
         print(profit_loss)
 
+#may zip data before output
+
+
+#specify the file to write output on
+stats_output = os.pth.join('Pybankoutput.csv')
+
+#write output data in new csv
+with open(stats_output, 'w') as csvfile:
+    
+    #initalize csv.writer
+    csvwriter = csv.writer(csvfile, delimiter=',')
+
+    #write the results on the new csv
+    csvwriter.writerow([Financial Analysis])
+    csvwriter.writerow('-'*10)
+    csvwriter.writerow(f'Total Months: {total_months}')
+    csvwriter.writerow(f'Total: {total_profitloss}')
+    csvwriter.writerow(f'Average Change: {average_change}')
+    csvwriter.writerow(f'Greatest Increase in Profits: {maxmonth} {greatest_increase_in_profits}')
+    csvwriter.writerow(f'Greatest Decrease in Profits: {minmonth} {greatest_decrease_in_profits}'))
 
 
 
