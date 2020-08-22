@@ -9,88 +9,118 @@ csvpath = os.path.join('..' , 'Resources', 'budget_data.csv')
 with open(csvpath, 'r') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
 
-    print(csvreader)
+    #print(csvreader)
 
     #read the header 
     csv_header = next(csvreader)
-    print(f"CSV Header : {csv_header}")
+    #print(f"CSV Header : {csv_header}")
+
+    #tried to skip header but distorts numbers
+    #next(csvreader)
 
 # list to store data
-total_months = []
-total_profitloss = []
-average_change = []
-greatest_increase_in_profits = []
-
-#function that will review the budget data
-def stats(budget_info):
-#assigning variables in data
-#assign month from column 0 and since numbers and letter made string but need to convert to integer so it can be counted
-    months = (int(str(budget_info[0]))
-
-#assign profit and loss from column 1, may need to specify in formula which are positive and which are negative
-    profit_loss =int(budget_info[1])
-
-# build out calculations of data needed
-# The total number of months included in the dataset
-    total_months = sum(months)
-
-#The net total amount of "Profit/Losses" over the entire period
-    total_profitloss = sum(profit_loss)
-
-    if profit_loss >0:
-        print(f'Profit is  {profit_loss})
-    else:
-        print(f'Losses are {profit_loss}')
-
-#The average of the changes in "Profit/Losses" over the entire period
-    average_change = mean(profit_loss)
-
-#The greatest increase in profits (date and amount) over the entire period
-    greatest_increase_in_profits = max(profit_loss)
-        #need to identify month
-        maxmonth = 
-
-#The greatest decrease in losses (date and amount) over the entire period
-    greatest_decrease_in_profits = min(profit_loss)
-        #need to identify month
-        minmonth = 
-
-
- #print out the results of the information
-    print(Financial Analysis)
-    print('-'*10)
-    print(f'Total Months: {total_months}')
-    print(f'Total: {total_profitloss}')
-    print(f'Average Change: {average_change}')
-    print(f'Greatest Increase in Profits: {maxmonth} {greatest_increase_in_profits}')
-    print(f'Greatest Decrease in Profits: {minmonth} {greatest_decrease_in_profits')
-
+    months_list = []
+    profitloss_list = []
+    month_change =[]
+    prior_amt = 0
+    month_count = []
+    sum_avg_change =[]
+    first_monthrow = True
 
 #loop through the data
     for row in csvreader:
-        print(months)
-        print(profit_loss)
+      
+#assigning variables in data
+#assign month from column 0 and since numbers and letter made string but need to convert to integer so it can be counted
+          months = str(row[0])
+          months_list.append(months)
 
-#may zip data before output
+            
+#assign profit and loss from column 1
+          profit_loss = int(row[1])
+          profitloss_list.append(profit_loss)
+                           
+          change = int(row[1]) - prior_amt
+          prior_amt = int(row[1])
+          #print(change)
+          month_change.append(change)
+          month_count.append(0)
 
+          if first_monthrow == False:
+            sum_avg_change.append(change)
+          first_monthrow = False
+     
 
-#specify the file to write output on
-stats_output = os.pth.join('Pybankoutput.csv')
+          i = month_change.index(change)
+          month_count[i]+=1
+          #print(i)
 
-#write output data in new csv
-with open(stats_output, 'w') as csvfile:
-    
-    #initalize csv.writer
-    csvwriter = csv.writer(csvfile, delimiter=',')
+#outside loop count of all months        
+total_months = len(month_change)
+#print(total_months)
 
-    #write the results on the new csv
-    csvwriter.writerow([Financial Analysis])
-    csvwriter.writerow('-'*10)
-    csvwriter.writerow(f'Total Months: {total_months}')
-    csvwriter.writerow(f'Total: {total_profitloss}')
-    csvwriter.writerow(f'Average Change: {average_change}')
-    csvwriter.writerow(f'Greatest Increase in Profits: {maxmonth} {greatest_increase_in_profits}')
-    csvwriter.writerow(f'Greatest Decrease in Profits: {minmonth} {greatest_decrease_in_profits}'))
+#outside loop that totals all profit and loss
+total_profit_loss = sum(profitloss_list)
+#print(total_profit_loss)
 
+#outside loop calculation of average of the changes
+#avg_change = sum(month_change)/total_months
 
+avg_change = round(sum(sum_avg_change)/len(sum_avg_change),2)
+#print(avg_change)
 
+# change_list = []
+#loop through the month change data to extract info
+for i in month_change:
+
+#extracted index related to highest change month change and then combined information needed for output
+  increase_index = month_change.index(max(month_change))
+#print (increase_index)
+increase = months_list[increase_index] + " ($" + str(month_change[increase_index]) + ")"
+#print(increase)
+
+#extracted index related to lowest change month change and then combined information needed for output
+decrease_index = month_change.index(min(month_change))
+#print(decrease_index)
+decrease = months_list[decrease_index] + " ($" + str(month_change[decrease_index]) + ")"
+#print(decrease)
+
+#detail that results will go in text file 
+results_output = "bankoutput.txt"
+#print(results_output)
+
+#write output data in new txt file
+results_file = open(results_output, 'w') 
+
+output_string = "Financial Analysis"
+print(output_string)
+results_file.write(output_string+"\n") 
+
+output_string = ('-'*10)
+print(output_string)
+results_file.write(output_string+"\n") 
+
+output_string = (f'Total Months: {total_months}')
+print(output_string)
+results_file.write(output_string+"\n") 
+
+output_string = (f'Total: $ {total_profit_loss}')
+print(output_string)
+results_file.write(output_string+"\n") 
+
+output_string = (f'Average Change: $ {avg_change}')
+print(output_string)
+results_file.write(output_string+"\n") 
+
+output_string = (f'Greatest Increase in Profits: {increase}')
+print(output_string)
+results_file.write(output_string+"\n") 
+
+output_string = (f'Greatest Decrease in Profits: {decrease}')
+print(output_string)
+results_file.write(output_string+"\n") 
+
+# #flushes information from ram since writing to txt file
+results_file.flush()
+#closes the file after
+results_file.close()
