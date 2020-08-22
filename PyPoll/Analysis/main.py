@@ -9,11 +9,11 @@ csvpath = os.path.join('..', 'Resources', 'election_data.csv')
 with open(csvpath, 'r') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
 
-    print(csvreader)
+    #print(csvreader)
 
     #read the header 
     csv_header = next(csvreader)
-    print(f"CSV Header : {csv_header}")
+    #print(f"CSV Header : {csv_header}")
 
 #may need list of data
     vote_count = 0
